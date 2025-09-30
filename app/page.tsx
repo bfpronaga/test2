@@ -62,12 +62,34 @@ export default function Home() {
 
     const sendTestNotification = async () => {
         try {
+            // First test the simple endpoint
+            const simpleResponse = await fetch("/api/test-simple", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!simpleResponse.ok) {
+                throw new Error(`HTTP error! status: ${simpleResponse.status}`);
+            }
+
+            const simpleData = await simpleResponse.json();
+            console.log("Simple test result:", simpleData);
+
+            // Now try the OneSignal notification
             const response = await fetch("/api/test-notification", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API Error Response:", errorText);
+                throw new Error(`API Error: ${response.status} - ${errorText}`);
+            }
 
             const data = await response.json();
             if (data.success) {
@@ -76,6 +98,7 @@ export default function Home() {
                 alert("Failed to send notification: " + data.error);
             }
         } catch (error) {
+            console.error("Full error details:", error);
             alert("Error sending notification: " + error);
         }
     };
@@ -146,6 +169,23 @@ export default function Home() {
                         <div>
                             <h4 className="font-medium text-blue-700 dark:text-blue-300 mb-2">Quick Test Buttons:</h4>
                             <div className="space-y-2">
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            const response = await fetch("/api/test-simple", {
+                                                method: "POST",
+                                                headers: { "Content-Type": "application/json" },
+                                            });
+                                            const data = await response.json();
+                                            alert("Simple test: " + data.message);
+                                        } catch (error) {
+                                            alert("Simple test failed: " + error);
+                                        }
+                                    }}
+                                    className="w-full bg-gray-500 text-white px-4 py-3 rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                                >
+                                    🔧 Test API Connection
+                                </button>
                                 <button onClick={sendTestNotification} className="w-full bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 transition-colors font-medium">
                                     🚀 Send Test Notification
                                 </button>
