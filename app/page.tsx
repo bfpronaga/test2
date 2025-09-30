@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import { useState, useEffect } from "react";
-import { useOneSignal } from "../hooks/useOneSignal";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -20,7 +19,7 @@ export default function Home() {
     const [isInstalled, setIsInstalled] = useState(false);
 
     // OneSignal integration
-    const { user, isInitialized, subscribe, unsubscribe } = useOneSignal(process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID || "");
+    //const { user, isInitialized, subscribe, unsubscribe } = useOneSignal(process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID || "");
 
     useEffect(() => {
         // Check online status
@@ -136,46 +135,7 @@ export default function Home() {
 
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border">
                         <h2 className="text-xl font-semibold mb-4">Push Notifications</h2>
-                        <div className="space-y-3">
-                            {isInitialized ? (
-                                <>
-                                    {user ? (
-                                        <div className="text-green-600">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-green-500">✓</span>
-                                                <span>Subscribed to notifications</span>
-                                            </div>
-                                            <p className="text-sm text-gray-500 mt-1">User ID: {user.userId}</p>
-                                        </div>
-                                    ) : (
-                                        <div className="text-yellow-600">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-yellow-500">⚠</span>
-                                                <span>Not subscribed to notifications</span>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="flex gap-2 mt-4">
-                                        {!user ? (
-                                            <button onClick={subscribe} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
-                                                Subscribe
-                                            </button>
-                                        ) : (
-                                            <button onClick={unsubscribe} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
-                                                Unsubscribe
-                                            </button>
-                                        )}
-
-                                        <button onClick={sendTestNotification} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-                                            Send Test
-                                        </button>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="text-gray-500">Initializing OneSignal...</div>
-                            )}
-                        </div>
+                        <div className="space-y-3"></div>
                     </div>
                 </div>
 
