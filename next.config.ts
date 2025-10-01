@@ -2,10 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
     reactStrictMode: true,
-    // PWA Configuration - simplified to avoid mobile access issues
-    experimental: {
-        esmExternals: false,
-    },
     // Minimal headers for PWA - only essential ones
     async headers() {
         return [

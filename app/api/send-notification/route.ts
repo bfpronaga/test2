@@ -9,8 +9,8 @@ interface NotificationRequest {
 
 interface OneSignalResponse {
     id: string;
-    recipients: number;
-    external_id: string;
+    external_id?: string;
+    errors?: any;
 }
 
 export async function POST(request: NextRequest) {
@@ -33,19 +33,29 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Build notification payload according to OneSignal API v1 documentation
         const notificationData = {
             app_id: appId,
-            headings: { en: title },
+            target_channel: "push",
             contents: { en: message },
+            headings: { en: title },
             url: url || "/",
-            ...(userId ? { include_player_ids: [userId] } : { included_segments: ["Subscribed Users"] }),
             chrome_web_icon: "/icon-192x192.svg",
             chrome_web_badge: "/icon-192x192.svg",
             firefox_icon: "/icon-192x192.svg",
-            chrome_icon: "/icon-192x192.svg",
+            // Target all subscribed users if no specific user ID
+            included_segments: ["Active Subscriptions"],
+            // If specific user ID provided, target that user instead
+            ...(userId && {
+                include_subscription_ids: [userId],
+                included_segments: undefined,
+            }),
         };
 
-        const response = await fetch("https://onesignal.com/api/v1/notifications", {
+        console.log("Sending notification with data:", JSON.stringify(notificationData, null, 2));
+
+        // Use the correct OneSignal API endpoint
+        const response = await fetch("https://api.onesignal.com/notifications?c=push", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -54,25 +64,38 @@ export async function POST(request: NextRequest) {
             body: JSON.stringify(notificationData),
         });
 
+        console.log("OneSignal API response status:", response.status);
+
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error("OneSignal API error:", errorData);
+            const errorText = await response.text();
+            console.error("OneSignal API error response:", errorText);
+
+            let errorData;
+            try {
+                errorData = JSON.parse(errorText);
+            } catch {
+                errorData = { message: errorText };
+            }
+
             return NextResponse.json(
                 {
                     error: "Failed to send notification",
                     details: errorData,
+                    status: response.status,
                 },
                 { status: response.status }
             );
         }
 
         const data: OneSignalResponse = await response.json();
+        console.log("OneSignal API success response:", data);
 
         return NextResponse.json({
             success: true,
             notificationId: data.id,
-            recipients: data.recipients,
+            externalId: data.external_id,
             message: "Notification sent successfully",
+            errors: data.errors,
         });
     } catch (error) {
         console.error("Error sending notification:", error);
