@@ -37,7 +37,8 @@ export default function Home() {
 
         // Listen for install prompt
         const handleBeforeInstallPrompt = (e: any) => {
-            e.preventDefault();
+            //e.prompt();
+            // e.preventDefault();
             setInstallPrompt(e);
         };
 
@@ -105,10 +106,13 @@ export default function Home() {
     };
 
     const handleSubscribe = async () => {
-        await OneSignal.User.PushSubscription.optIn();
+        console.log("Subscribing...");
+        const result = await OneSignal.User.PushSubscription.optIn();
+        console.log(result);
     };
     const handleUnsubscribe = async () => {
-        await OneSignal.User.PushSubscription.optOut();
+        const result = await OneSignal.User.PushSubscription.optOut();
+        console.log(result);
     };
 
     return (

@@ -6,11 +6,12 @@ import OneSignal from "react-onesignal";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const oneSignalInit = async () => {
-            await OneSignal.init({
+            const result = await OneSignal.init({
                 appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID || "",
             }).then(() => {
                 OneSignal.Slidedown.promptPush();
             });
+            console.log(result);
         };
         oneSignalInit();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
