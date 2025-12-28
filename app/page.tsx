@@ -19,9 +19,6 @@ export default function Home() {
     const [installPrompt, setInstallPrompt] = useState<any>(null);
     const [isInstalled, setIsInstalled] = useState(false);
 
-    // OneSignal integration
-    //const { user, isInitialized, subscribe, unsubscribe } = useOneSignal(process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID || "");
-
     useEffect(() => {
         // Check online status
         const handleOnline = () => setIsOnline(true);
@@ -114,6 +111,10 @@ export default function Home() {
         const result = await OneSignal.User.PushSubscription.optOut();
         console.log(result);
     };
+    const handleLogin = async () => {
+        const res = await OneSignal.login("test");
+        console.log(res);
+    };
 
     return (
         <div className={`${geistSans.className} ${geistMono.className} font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20`}>
@@ -125,6 +126,7 @@ export default function Home() {
                         <span className="text-sm">{isOnline ? "Online" : "Offline"}</span>
                     </div>
                 </div>
+                <button onClick={handleLogin}>Login</button>
                 <button onClick={handleSubscribe}>Subscribe</button>
                 <button onClick={handleUnsubscribe}>Unsubscribe</button>
                 <div className="text-center sm:text-left">

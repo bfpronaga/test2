@@ -44,12 +44,12 @@ export async function POST(request: NextRequest) {
             chrome_web_badge: "/icon-192x192.svg",
             firefox_icon: "/icon-192x192.svg",
             // Target all subscribed users if no specific user ID
-            included_segments: ["Active Subscriptions"],
+            // included_segments: ["Active Subscriptions"],
             // If specific user ID provided, target that user instead
-            ...(userId && {
-                include_subscription_ids: [userId],
-                included_segments: undefined,
-            }),
+            // ...(userId && {
+            include_external_user_ids: ["test"],
+            // included_segments: undefined,
+            // }),
         };
 
         console.log("Sending notification with data:", JSON.stringify(notificationData, null, 2));
